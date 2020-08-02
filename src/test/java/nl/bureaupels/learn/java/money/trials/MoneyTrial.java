@@ -1,4 +1,4 @@
-package nl.bureaupels.learn.java.money;
+package nl.bureaupels.learn.java.money.trials;
 
 import org.javamoney.moneta.Money;
 
@@ -6,7 +6,7 @@ import javax.money.convert.CurrencyConversion;
 import javax.money.convert.MonetaryConversions;
 import java.math.BigDecimal;
 
-public class Main {
+public class MoneyTrial {
     public static void main(String[] args) {
         CurrencyConversion conv = MonetaryConversions.getConversion("EUR", "ECB");
         Money pegels = Money.of(BigDecimal.valueOf(100L), "EUR");

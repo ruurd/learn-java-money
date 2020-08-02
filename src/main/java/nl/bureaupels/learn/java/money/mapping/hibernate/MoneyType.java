@@ -1,4 +1,4 @@
-package nl.bureaupels.learn.java.money.persistence;
+package nl.bureaupels.learn.java.money.mapping.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -42,8 +42,7 @@ public class MoneyType implements UserType {
 
         String currency = rs.getString(names[0]);
         BigDecimal amount = rs.getBigDecimal(names[1]);
-        Money result = Money.of(amount, currency);
-        return result;
+        return Money.of(amount, currency);
     }
 
     @Override

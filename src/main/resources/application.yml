@@ -1,0 +1,43 @@
+debug: false
+spring:
+  security:
+    user:
+      name: money-user
+      password: money-pass
+  datasource:
+    url: jdbc:postgresql://localhost:5432/money
+    username: money
+    password: money
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        ddl-auto: verify
+        jdbc.lob.non_contextual_creation: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: never
+  metrics:
+    export:
+      influx:
+        enabled: true
+        step: PT10S
+        auto-create-db: false
+        db: money
+  info:
+    git:
+      mode: full
+info:
+  app:
+    name: @project.artifactId@-@version@
+    description: @project.description@
+  build:
+    groupId: @project.groupId@
+    artifact: @project.artifactId@
+    name: @project.name@
+    version: @version@
