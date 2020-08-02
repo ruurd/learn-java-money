@@ -33,6 +33,7 @@
         <!--test -->
         <pojo-tester.version>0.7.6</pojo-tester.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
+        <annotations.version>13.0</annotations.version>
     </properties>
 
     <dependencyManagement>
@@ -85,8 +86,12 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <!-- javax -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${annotations.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Metrics -->
         <dependency>

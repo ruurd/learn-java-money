@@ -1,6 +1,10 @@
 package nl.bureaupels.learn.java.money.mapping.hibernate;
 
+import org.hibernate.HibernateException;
+import org.hibernate.UnknownEntityTypeException;
+import org.hibernate.service.UnknownUnwrapTypeException;
 import org.hibernate.type.descriptor.WrapperOptions;
+import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.ImmutableMutabilityPlan;
 import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
 import org.hibernate.type.descriptor.java.MutabilityPlan;
@@ -9,47 +13,16 @@ import org.iban4j.IbanFormat;
 
 import java.util.Comparator;
 
-public class IbanTypeDescriptor implements JavaTypeDescriptor<Iban> {
+public class IbanTypeDescriptor extends AbstractTypeDescriptor<Iban> {
 
-    public static final IbanTypeDescriptor INSTANCE = new IbanTypeDescriptor();
-    public static final MutabilityPlan<Iban> MUTABILITY_PLAN = new ImmutableMutabilityPlan<>();
+    public static final IbanTypeDescriptor INSTANCE = new IbanTypeDescriptor(Iban.class, ImmutableMutabilityPlan.INSTANCE);
 
-    @Deprecated
-    @Override
-    public Class<Iban> getJavaTypeClass() {
-        return getJavaType();
+    protected IbanTypeDescriptor(Class<Iban> type) {
+        super(type);
     }
 
-    @Override
-    public Class<Iban> getJavaType() {
-        return Iban.class;
-    }
-
-    @Override
-    public MutabilityPlan<Iban> getMutabilityPlan() {
-        return MUTABILITY_PLAN;
-    }
-
-    Comparator<Iban> ibanComparator = Comparator.comparing(Iban::toString);
-
-    @Override
-    public Comparator<Iban> getComparator() {
-        return ibanComparator;
-    }
-
-    @Override
-    public int extractHashCode(Iban value) {
-        return value.hashCode();
-    }
-
-    @Override
-    public boolean areEqual(Iban one, Iban another) {
-        return one.equals(another);
-    }
-
-    @Override
-    public String extractLoggableRepresentation(Iban value) {
-        return value.toString();
+    protected IbanTypeDescriptor(Class<Iban> type, MutabilityPlan<Iban> mutabilityPlan) {
+        super(type, mutabilityPlan);
     }
 
     @Override
@@ -63,14 +36,28 @@ public class IbanTypeDescriptor implements JavaTypeDescriptor<Iban> {
     }
 
     @Override
-    public <X> X unwrap(Iban value, Class<X> type, WrapperOptions options) {
-        return (X) value.toString();
+    public <X> X unwrap(Iban value, Class<X> type, WrapperOptions options) throws HibernateException {
+        X result = null;
+        if (value != null) {
+            if (type.isAssignableFrom(String.class)) {
+                result = (X) value.toString();
+            } else {
+                unknownUnwrap(type);
+            }
+        }
+        return result;
     }
 
     @Override
-    public <X> Iban wrap(X value, WrapperOptions options) {
-        if (value == null)
-            return null;
-        return Iban.valueOf((String) value, IbanFormat.None);
+    public <X> Iban wrap(X value, WrapperOptions options) throws HibernateException {
+        Iban result = null;
+        if (value != null) {
+            if (value instanceof String) {
+                result = Iban.valueOf((String) value, IbanFormat.None);
+            } else {
+                unknownWrap(value.getClass());
+            }
+        }
+        return result;
     }
 }
