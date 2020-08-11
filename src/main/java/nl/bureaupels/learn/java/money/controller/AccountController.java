@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.net.URI;
 import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -34,7 +35,7 @@ public class AccountController {
         try {
             return ResponseEntity.ok(accountService.allAccounts());
         } catch (Exception x) {
-            log.error("wut? {}", x);
+            log.error("cannot retrieve list of accounts", x);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -42,38 +43,39 @@ public class AccountController {
     @GetMapping(value = "/accounts/{id}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Account> getAccountById(@PathVariable(name = "id") @Min(value = 0) Long id) {
-        ResponseEntity<Account> result;
         Optional<Account> account = accountService.findAccountById(id);
-        return account.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping(value = "/accounts", params = {"iban"}, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Account> getAccountByIban(@RequestParam(name = "iban") @Min(value = 18) @Max(value = 34) String iban) {
-        ResponseEntity<Account> result;
         Optional<Account> account = accountService.findAccountByIban(Iban.valueOf(iban));
-        return account.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping(value = "/accounts", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Account> createAccount(@RequestBody Account newAccount) {
+    public ResponseEntity<Void> createAccount(@RequestBody Account newAccount) {
+        ResponseEntity<Void> result;
         try {
-            return ResponseEntity.ok(accountService.addAccount(newAccount));
+            Account createdAccount = accountService.addAccount(newAccount);
+            result = ResponseEntity.created(URI.create("/" + createdAccount.getId().toString())).build();
         } catch (DataIntegrityViolationException divx) {
-            log.info("cannot add account: {}", divx);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.info("cannot add account", divx);
+            result = ResponseEntity.badRequest().build();
         }
+        return result;
     }
 
     @PutMapping(value = "/accounts/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Account> updateAccount(@RequestBody Account existingAccount, @PathVariable(name = "id") @Min(value = 0) Long id) {
+    public ResponseEntity<Void> updateAccount(@RequestBody Account existingAccount, @PathVariable(name = "id") @Min(value = 0) Long id) {
         Optional<Account> account = accountService.findAccountById(id);
         if (account.isPresent()) {
-            return ResponseEntity.ok(accountService.updateAccount(existingAccount));
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -83,9 +85,9 @@ public class AccountController {
         Optional<Account> account = accountService.findAccountById(id);
         if (account.isPresent()) {
             accountService.deleteAccount(account.get());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 }
