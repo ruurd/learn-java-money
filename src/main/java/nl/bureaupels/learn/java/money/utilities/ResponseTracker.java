@@ -1,6 +1,7 @@
 package nl.bureaupels.learn.java.money.utilities;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import nl.bureaupels.learn.java.money.annotations.TrackableProcessor;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import static nl.bureaupels.learn.java.money.utilities.Quoter.quote;
 
 @RequiredArgsConstructor
-@Builder(builderClassName = "Builder")
+@Builder
+@Getter
 public class ResponseTracker {
 
     private final String application;
@@ -35,13 +37,4 @@ public class ResponseTracker {
         sb.append(TrackableProcessor.process(trackable));
         return sb.toString();
     }
-
-    public static ResponseTracker.Builder from(RequestTracker requestTracker) {
-        return ResponseTracker.builder()
-            .application(requestTracker.getApplication())
-            .feature(requestTracker.getFeature())
-            .operation(requestTracker.getOperation())
-            .method(requestTracker.getMethod());
-    }
-
 }

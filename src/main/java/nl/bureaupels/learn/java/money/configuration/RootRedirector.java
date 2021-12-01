@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Redirect invocation of root endpoint to /swagger-ui.html
  */
@@ -14,7 +16,7 @@ public class RootRedirector {
     public WebMvcConfigurer redirectRootRequest() {
         return new WebMvcConfigurer() {
             @Override
-            public void addViewControllers(ViewControllerRegistry registry) {
+            public void addViewControllers(@NotNull ViewControllerRegistry registry) {
                 registry.addViewController("").setViewName("redirect:/actuator");
             }
         };

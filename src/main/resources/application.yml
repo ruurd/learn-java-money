@@ -11,9 +11,15 @@ spring:
   jpa:
     properties:
       hibernate:
+        generate_statistics: false
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         ddl-auto: verify
         jdbc.lob.non_contextual_creation: true
+  zipkin:
+    service:
+      name: @project.name@
+logging:
+  org.hibernate.engine.internal.StatisticalLoggongSessionListener: INFO
 management:
   endpoints:
     web:
@@ -23,12 +29,20 @@ management:
     health:
       show-details: never
   metrics:
+    tags:
+      application: @project.name@
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
     export:
       influx:
+        org: @influx.org@
         enabled: true
-        step: PT10S
+        db: @influx.bucket@
         auto-create-db: false
-        db: money
+        token: @influx.token@
   info:
     git:
       mode: full

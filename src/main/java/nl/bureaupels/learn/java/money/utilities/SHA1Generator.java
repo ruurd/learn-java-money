@@ -1,6 +1,5 @@
 package nl.bureaupels.learn.java.money.utilities;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -9,14 +8,17 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 @Slf4j
-@UtilityClass
-public class SHA1Generator {
+public final class SHA1Generator {
 
-    public String generateFrom(String s) {
+    private SHA1Generator() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    public static String generateFrom(String s) {
         return DigestUtils.sha1Hex(s);
     }
 
-    public String generateFrom(HttpServletRequest request) {
+    public static String generateFrom(HttpServletRequest request) {
         StringBuilder sb = new StringBuilder();
         sb.append("PATH");
         sb.append(request.getContextPath());

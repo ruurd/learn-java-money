@@ -10,9 +10,17 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.validation.constraints.Max;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.net.URI;
 import java.util.Optional;
@@ -22,6 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
+@Validated
 @RequestMapping(value = ControllerConstants.URL_PREFIX)
 public class AccountController {
 
@@ -33,6 +42,7 @@ public class AccountController {
     @ResponseBody
     public ResponseEntity<AccountList> getAllAccounts() {
         try {
+            log.info("getAllAcounts");
             return ResponseEntity.ok(accountService.allAccounts());
         } catch (Exception x) {
             log.error("cannot retrieve list of accounts", x);
@@ -43,20 +53,23 @@ public class AccountController {
     @GetMapping(value = "/accounts/{id}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Account> getAccountById(@PathVariable(name = "id") @Min(value = 0) Long id) {
+        log.info("getAcountById({})", id);
         Optional<Account> account = accountService.findAccountById(id);
         return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping(value = "/accounts", params = {"iban"}, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/accounts/iban/{iban}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Account> getAccountByIban(@RequestParam(name = "iban") @Min(value = 18) @Max(value = 34) String iban) {
+    public ResponseEntity<Account> getAccountByIban(@PathVariable(name = "iban") String iban) {
+        log.info("getAcountByIban({})", iban);
         Optional<Account> account = accountService.findAccountByIban(Iban.valueOf(iban));
         return account.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping(value = "/accounts", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Void> createAccount(@RequestBody Account newAccount) {
+    public ResponseEntity<Void> createAccount(@Valid @RequestBody Account newAccount) {
+        log.info("createAccount({})", newAccount);
         ResponseEntity<Void> result;
         try {
             Account createdAccount = accountService.addAccount(newAccount);
@@ -71,6 +84,7 @@ public class AccountController {
     @PutMapping(value = "/accounts/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Void> updateAccount(@RequestBody Account existingAccount, @PathVariable(name = "id") @Min(value = 0) Long id) {
+        log.info("updateAccount({})", id);
         Optional<Account> account = accountService.findAccountById(id);
         if (account.isPresent()) {
             return ResponseEntity.noContent().build();
@@ -82,6 +96,7 @@ public class AccountController {
     @DeleteMapping(value = "/accounts/{id}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Void> deleteAccount(@PathVariable(name = "id") @Min(value = 0) Long id) {
+        log.info("deleteAccount({})", id);
         Optional<Account> account = accountService.findAccountById(id);
         if (account.isPresent()) {
             accountService.deleteAccount(account.get());

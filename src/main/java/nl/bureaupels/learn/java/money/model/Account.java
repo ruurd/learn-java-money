@@ -11,7 +11,7 @@ import org.javamoney.moneta.Money;
 
 @Trackable
 @Data
-@Builder(builderClassName = "Builder")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account {

@@ -2,6 +2,7 @@ package nl.bureaupels.learn.java.money.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.swagger.v3.core.jackson.ModelResolver;
 import nl.bureaupels.learn.java.money.mapping.jackson.IbanDeserializer;
 import nl.bureaupels.learn.java.money.mapping.jackson.IbanSerializer;
 import nl.bureaupels.learn.java.money.mapping.jackson.MoneyDeserializer;
@@ -28,4 +29,10 @@ public class MoneyApplicationConfiguration {
         mapper.registerModule(module);
         return mapper;
     }
+
+    @Bean
+    public ModelResolver modelResolver(ObjectMapper objectMapper) {
+        return new ModelResolver(objectMapper);
+    }
+
 }
