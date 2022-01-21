@@ -1,5 +1,7 @@
 package nl.bureaupels.learn.java.money.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.bureaupels.learn.java.money.model.Account;
@@ -20,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.net.URI;
 import java.util.Optional;
 
