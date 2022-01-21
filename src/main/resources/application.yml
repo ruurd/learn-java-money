@@ -19,7 +19,7 @@ spring:
     service:
       name: @project.name@
 logging:
-  org.hibernate.engine.internal.StatisticalLoggongSessionListener: INFO
+  org.hibernate.engine.internal.StatisticalLoggingSessionListener: INFO
 management:
   endpoints:
     web:
@@ -40,7 +40,7 @@ management:
       influx:
         org: @influx.org@
         enabled: true
-        db: @influx.bucket@
+        bucket: @influx.bucket@
         auto-create-db: false
         token: @influx.token@
   info:

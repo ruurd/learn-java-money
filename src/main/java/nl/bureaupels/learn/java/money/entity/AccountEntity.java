@@ -1,8 +1,9 @@
 package nl.bureaupels.learn.java.money.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.iban4j.Iban;
@@ -19,10 +20,11 @@ import javax.persistence.Table;
 import static nl.bureaupels.learn.java.money.entity.EntityConstants.TABLE_ACCOUNTS;
 
 @Table(name = TABLE_ACCOUNTS)
-@Entity
+@Entity(name = "Account")
 @Getter
 @Setter
-@NoArgsConstructor
+@RequiredArgsConstructor
+@ToString
 public class AccountEntity {
 
     @Id
